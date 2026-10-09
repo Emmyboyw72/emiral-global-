@@ -67,6 +67,11 @@ export function ImageUpload({
       if (!data.url) {
         throw new Error("Server returned no image URL");
       }
+      console.log("Upload successful, URL:", data.url);
+      if (!data.url) {
+        console.error("Upload data received, but no URL found:", data);
+        throw new Error("Server returned no image URL");
+      }
 
       onUploadSuccess(data.url);
       setError(null);
@@ -150,8 +155,9 @@ export function ImageUpload({
                 alt="Preview"
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  // Fallback icon if image fails to load
-                  (e.target as HTMLElement).style.display = 'none';
+                  console.error("Image loading error:", e);
+                  // Optional: Display a placeholder or show the broken image instead of hiding it
+                  (e.target as HTMLElement).style.opacity = '0.5'; 
                 }}
               />
             )}

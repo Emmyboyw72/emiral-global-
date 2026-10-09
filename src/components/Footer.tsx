@@ -41,7 +41,6 @@ export function Footer() {
                 <li><Link to="/blog">Latest Blog</Link></li>
                 <li><Link to="/faq">FAQ</Link></li>
                 <li><Link to="/contact">Contact Support</Link></li>
-                <li className="mt-4"><Link to="/admin/login" className="btn outline py-2 px-4 text-[10px]">Admin Access</Link></li>
               </ul>
             </div>
 
