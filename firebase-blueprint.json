@@ -1,0 +1,146 @@
+{
+  "entities": {
+    "product": {
+      "title": "Product",
+      "description": "A wellness product in the catalogue.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Product name" },
+        "category": { "type": "string", "description": "Category e.g. Wellness, Health" },
+        "short_description": { "type": "string", "description": "Brief description for cards" },
+        "description": { "type": "string", "description": "Full product description" },
+        "price": { "type": "number", "description": "Price in Naira" },
+        "currency": { "type": "string", "description": "Currency symbol", "enum": ["₦"] },
+        "thumbnail": { "type": "string", "description": "URL to product image" },
+        "availability": { "type": "string", "description": "Availability status", "enum": ["In Stock", "Out of Stock"] },
+        "stock_quantity": { "type": "integer" },
+        "sku": { "type": "string" },
+        "ingredients": { "type": "string" },
+        "usage_instructions": { "type": "string" },
+        "product_information": { "type": "string" },
+        "published": { "type": "boolean" },
+        "featured": { "type": "boolean" }
+      },
+      "required": ["name", "price", "category", "published"]
+    },
+    "order": {
+      "title": "Order",
+      "description": "A customer order.",
+      "type": "object",
+      "properties": {
+        "order_number": { "type": "string" },
+        "customer_name": { "type": "string" },
+        "customer_email": { "type": "string" },
+        "customer_phone": { "type": "string" },
+        "country": { "type": "string" },
+        "city": { "type": "string" },
+        "delivery_address": { "type": "string" },
+        "notes": { "type": "string" },
+        "subtotal": { "type": "number" },
+        "delivery_fee": { "type": "number" },
+        "total": { "type": "number" },
+        "currency": { "type": "string" },
+        "payment_status": { 
+          "type": "string", 
+          "enum": ["WAITING_FOR_PAYMENT", "PAYMENT_PROOF_SUBMITTED", "PAYMENT_CONFIRMED", "PAYMENT_REJECTED"] 
+        },
+        "order_status": { "type": "string", "enum": ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"] },
+        "payment_receipt_url": { "type": "string" },
+        "rejection_reason": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" },
+        "updated_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["order_number", "customer_name", "customer_email", "total", "payment_status", "order_status"]
+    },
+    "order_item": {
+      "title": "Order Item",
+      "description": "A single product in an order.",
+      "type": "object",
+      "properties": {
+        "order_id": { "type": "string" },
+        "product_id": { "type": "string" },
+        "product_name": { "type": "string" },
+        "price": { "type": "number" },
+        "quantity": { "type": "integer" },
+        "image": { "type": "string" }
+      },
+      "required": ["order_id", "product_id", "product_name", "price", "quantity"]
+    },
+    "contact_message": {
+      "title": "Contact Message",
+      "description": "Message from the contact form.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "subject": { "type": "string" },
+        "message": { "type": "string" },
+        "status": { "type": "string", "enum": ["new", "read", "replied"] },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "message", "status"]
+    },
+    "faq": {
+      "title": "FAQ",
+      "description": "Frequently Asked Question.",
+      "type": "object",
+      "properties": {
+        "question": { "type": "string" },
+        "answer": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["question", "answer"]
+    },
+    "event": {
+      "title": "Event",
+      "description": "Community event.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "event_date": { "type": "string", "format": "date" },
+        "location": { "type": "string" },
+        "country": { "type": "string" },
+        "image": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "event_date", "location"]
+    },
+    "article": {
+      "title": "Article",
+      "description": "Blog post.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "excerpt": { "type": "string" },
+        "content": { "type": "string" },
+        "category": { "type": "string" },
+        "author": { "type": "string" },
+        "featured_image": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "content", "author"]
+    },
+    "setting": {
+      "title": "Setting",
+      "description": "Application configuration.",
+      "type": "object",
+      "properties": {
+        "key": { "type": "string" },
+        "value": { "type": "string" }
+      },
+      "required": ["key", "value"]
+    }
+  },
+  "firestore": {
+    "products": { "schema": "product", "description": "Collection of products." },
+    "orders": { "schema": "order", "description": "Collection of orders." },
+    "orders/{orderId}/items": { "schema": "order_item", "description": "Sub-collection of order items." },
+    "contact_messages": { "schema": "contact_message", "description": "Collection of contact messages." },
+    "faqs": { "schema": "faq", "description": "Collection of FAQs." },
+    "events": { "schema": "event", "description": "Collection of events." },
+    "articles": { "schema": "article", "description": "Collection of articles." },
+    "settings": { "schema": "setting", "description": "Collection of settings." }
+  }
+}

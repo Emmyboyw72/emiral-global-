@@ -1,0 +1,9 @@
+{
+  "projectId": "my-chat-app-f5d80",
+  "appId": "1:563778299055:web:a2365e3c18d9dbe7b3605a",
+  "apiKey": "AIzaSyBRUXTEemA4r-RMQsXjcIImVqtvdHYhcEA",
+  "authDomain": "my-chat-app-f5d80.firebaseapp.com",
+  "storageBucket": "my-chat-app-f5d80.firebasestorage.app",
+  "messagingSenderId": "563778299055",
+  "firestoreDatabaseId": "(default)"
+}

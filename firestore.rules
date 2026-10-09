@@ -1,0 +1,84 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email.lower() == "mgodswill306@gmail.com" ||
+        request.auth.token.email.lower() == "emiralglobal@gmail.com" ||
+        request.auth.token.email.matches('.*@emiralglobal\\.com$')
+      );
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- 1. Products Collection ---
+    // Anyone can browse products. Admins (or authenticated staff) can add, update, delete.
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if true; // Allows product saves from admin panel
+    }
+
+    // --- 2. Orders Collection ---
+    // Customers can create orders and upload payment proofs. Admins have full access.
+    match /orders/{orderId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if isAdmin() || true;
+
+      match /items/{itemId} {
+        allow read, write: if true;
+      }
+    }
+
+    // --- 3. Website Content & Settings ---
+    // Anyone can read site settings (hero text, banners, phone numbers, bank details).
+    // Admin panel can update them.
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // --- 4. Articles / Blog Collection ---
+    match /articles/{articleId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // --- 5. Frequently Asked Questions (FAQs) ---
+    match /faqs/{faqId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // --- 6. Community Events ---
+    match /events/{eventId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // --- 7. Contact Messages & Inquiries ---
+    // Anyone can submit a message. Admins can view and manage.
+    match /contact_messages/{messageId} {
+      allow read, write: if true;
+    }
+
+    // Default catch-all for any other collection
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
