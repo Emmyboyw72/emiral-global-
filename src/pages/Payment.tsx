@@ -18,25 +18,26 @@ export function Payment() {
   const [success, setSuccess] = useState('');
   const [copied, setCopied] = useState<string | null>(null);
   const { settings } = useSettings();
-  const [showUpload, setShowUpload] = useState(false);
-  const [tempReceiptUrl, setTempReceiptUrl] = useState('');
+  const [senderName, setSenderName] = useState('');
+  const [senderAccount, setSenderAccount] = useState('');
 
-  const submitReceipt = async () => {
-    if (!order || !tempReceiptUrl) return;
+  const submitDetails = async () => {
+    if (!order || !senderName || !senderAccount) return;
     setUploading(true);
     try {
       await updateDoc(doc(db, 'orders', order.id), {
-        payment_receipt_url: tempReceiptUrl,
+        sender_name: senderName,
+        sender_account: senderAccount,
         payment_status: 'PAYMENT_PROOF_SUBMITTED',
         rejection_reason: null,
         updated_at: serverTimestamp()
       });
-      setSuccess('Payment proof submitted successfully! Our admin team will verify it shortly.');
-      setTempReceiptUrl('');
-      setShowUpload(false);
+      setSuccess('Payment details submitted successfully! Our admin team will verify it shortly.');
+      setSenderName('');
+      setSenderAccount('');
       fetchOrder(orderNum);
     } catch (err) {
-      setError('Failed to submit receipt. Please try again.');
+      setError('Failed to submit details. Please try again.');
     } finally {
       setUploading(false);
     }
@@ -283,21 +284,30 @@ export function Payment() {
                     </div>
                     
                     <div className="space-y-6">
-                      <ImageUpload 
-                        label="Select Receipt Screenshot"
-                        currentImage={tempReceiptUrl}
-                        onUploadSuccess={(url) => setTempReceiptUrl(url)}
-                        onRemove={() => setTempReceiptUrl('')}
-                        folder="receipts"
-                      />
+                      <div className="space-y-4">
+                        <input
+                          type="text"
+                          value={senderName}
+                          onChange={(e) => setSenderName(e.target.value)}
+                          placeholder="Sender Name"
+                          className="input w-full text-black"
+                        />
+                        <input
+                          type="text"
+                          value={senderAccount}
+                          onChange={(e) => setSenderAccount(e.target.value)}
+                          placeholder="Sender Account Number"
+                          className="input w-full text-black"
+                        />
+                      </div>
 
                       <div className="pt-4">
                         <button 
-                          onClick={submitReceipt}
-                          disabled={uploading || !tempReceiptUrl}
+                          onClick={submitDetails}
+                          disabled={uploading || !senderName || !senderAccount}
                           className={twMerge(
                             "btn w-full py-4 text-base font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all",
-                            tempReceiptUrl 
+                            (senderName && senderAccount)
                               ? "green shadow-xl shadow-green/20" 
                               : "bg-white/10 text-white/20 cursor-not-allowed border border-white/5"
                           )}
@@ -305,9 +315,9 @@ export function Payment() {
                           {uploading ? <Loader2 className="animate-spin" size={20} /> : <CheckCircle2 size={20} />}
                           I have made payments
                         </button>
-                        {!tempReceiptUrl && (
+                        {(!senderName || !senderAccount) && (
                           <p className="text-[9px] text-center mt-3 font-black uppercase tracking-widest text-white/30">
-                            Please upload receipt to continue
+                            Please enter details to continue
                           </p>
                         )}
                       </div>

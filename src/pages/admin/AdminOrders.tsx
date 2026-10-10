@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../../lib/firebase';
 import { collection, getDocs, updateDoc, doc, query, orderBy, serverTimestamp, deleteDoc } from 'firebase/firestore';
-import { ExternalLink, CheckCircle2, XCircle, Clock, Truck, Copy, Trash2, Save } from 'lucide-react';
+import { ExternalLink, CheckCircle2, Clock, Truck, Copy, Trash2, Save } from 'lucide-react';
 import { formatDateTime, getDateMillis } from '../../lib/dateUtils';
 
 export function AdminOrders() {
@@ -10,7 +10,6 @@ export function AdminOrders() {
   const [updating, setUpdating] = useState<string | null>(null);
   const [editingOrder, setEditingOrder] = useState<string | null>(null);
   const [editData, setEditData] = useState<any>({});
-  const [selectedReceipt, setSelectedReceipt] = useState<string | null>(null);
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -130,30 +129,6 @@ export function AdminOrders() {
 
   return (
     <div className="space-y-10">
-      {/* Receipt Modal */}
-      {selectedReceipt && (
-        <div 
-          className="fixed inset-0 z-[100] bg-dark/90 flex items-center justify-center p-4 md:p-12"
-          onClick={() => setSelectedReceipt(null)}
-        >
-          <div className="relative max-w-4xl w-full bg-white rounded-3xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
-            <button 
-              onClick={() => setSelectedReceipt(null)}
-              className="absolute top-4 right-4 w-10 h-10 bg-dark/10 hover:bg-dark/20 text-dark rounded-full flex items-center justify-center transition-colors z-10"
-            >
-              <XCircle size={24} />
-            </button>
-            <div className="p-2 overflow-auto max-h-[85vh]">
-              <img 
-                src={selectedReceipt} 
-                alt="Payment Receipt" 
-                className="w-full h-auto rounded-xl object-contain mx-auto"
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
       <div className="admin-head">
         <div>
           <div className="eyebrow">Sales</div>
@@ -228,22 +203,14 @@ export function AdminOrders() {
                       <div className="font-bold text-dark">{o.customer_name}</div>
                       <div className="text-xs text-muted">{o.customer_email}</div>
                       <div className="text-xs text-muted">{o.customer_phone}</div>
+                      {o.sender_name && <div className="text-[10px] font-bold text-green mt-1">Sender: {o.sender_name}</div>}
+                      {o.sender_account && <div className="text-[10px] font-bold text-green">Account: {o.sender_account}</div>}
                       <div className="text-[10px] text-slate-400 mt-1 line-clamp-1">{o.delivery_address}</div>
                     </>
                   )}
                 </td>
                 <td>
                   <div className="font-black text-dark">{money(o.total)}</div>
-                  {o.payment_receipt_url ? (
-                    <button 
-                      onClick={() => setSelectedReceipt(o.payment_receipt_url)}
-                      className="text-[10px] font-black text-green uppercase tracking-widest flex items-center gap-1 mt-1 hover:underline"
-                    >
-                      View Receipt <ExternalLink size={10} />
-                    </button>
-                  ) : (
-                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest block mt-1">No Receipt</span>
-                  )}
                 </td>
                 <td>
                    <div className="space-y-2">
